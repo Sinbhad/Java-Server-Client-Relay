@@ -1,23 +1,23 @@
 import java.util.Scanner;
 public class ChooseType {
     void chooseType(){
-        int westleyKirk = 0;
+        int typeSelection = 0;
 
-        Scanner westleyNey = new Scanner(System.in);
+        Scanner keyboard = new Scanner(System.in);
         System.out.println("Would you like to join as the server or a client?");
         System.out.print("""
                 1) Server
                 2) Client
                 0) Exit
-                
-                
-                Option : """);
+               \s
+               \s
+                Option :\s""");
 
-        westleyKirk = westleyNey.nextInt();
-        if(westleyKirk == 1){
+        typeSelection = keyboard.nextInt();
+        if(typeSelection == 1){
             TCPServer server = new TCPServer();
             server.tcpServer();
-        }else if(westleyKirk == 2){
+        }else if(typeSelection == 2){
             TCPClient client = new TCPClient();
             client.tcpClient();
         }else{
