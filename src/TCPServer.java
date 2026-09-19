@@ -38,7 +38,7 @@ class TCPServer {
                     System.out.println("Message: " + receivedData.getMessage());
 
                     //User Prompting for new message <for now a new message will not be received until the server sends a message back..>
-                    System.out.print("Enter a message: ");
+                    System.out.print("\nEnter a message: ");
                     messageBody = keyboard.nextLine().trim();
 
                     //Prepares the new message to be sent back to the client

@@ -17,7 +17,7 @@ class TCPClient {
             boolean continueMessaging = true;
 
             while(continueMessaging) {
-                System.out.print("Enter a message: ");
+                System.out.print("\nEnter a message: ");
                 String messageBody = keyboard.nextLine().trim();
 
                 if (messageBody.equals("0")) {
