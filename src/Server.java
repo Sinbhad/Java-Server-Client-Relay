@@ -33,8 +33,8 @@ class TCPServer {
 
             Message receivedData = (Message) inFromClient.readObject();
             // Read the object from the client
-            System.out.println("Received message from: " + receivedData.getUserName());
-
+            System.out.println("\nReceived message from: " + receivedData.getUserName());
+            System.out.println("Message: " + receivedData.getMessage());
 
             // Send the exact same object back
             //outToClient.writeObject(receivedData);
