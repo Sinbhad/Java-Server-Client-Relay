@@ -26,11 +26,17 @@ class TCPClient {
                 } else {
                     Message messageObject = new Message("Westley", messageBody);
                     outToServer.writeObject(messageObject);
-                    outToServer.flush(); // Ensure the data is sent immediately
+                    outToServer.flush();
 
-                    // If the server sends objects back, read them here:
-                    // Message response = (Message) inFromServer.readObject();
-                    // System.out.println("FROM SERVER: " + response.getMessage());
+
+                    try {
+                        Message receivedData = (Message) inFromServer.readObject();
+                        System.out.println("\nReceived message from: " + receivedData.getUserName());
+                        System.out.println("Message: " + receivedData.getMessage());
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
             }
 

@@ -9,8 +9,8 @@ public class ChooseType {
                 1) Server
                 2) Client
                 0) Exit
-               \s
-               \s
+               
+               
                 Option :\s""");
 
         typeSelection = keyboard.nextInt();
