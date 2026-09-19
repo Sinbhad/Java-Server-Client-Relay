@@ -30,15 +30,14 @@ class TCPServer {
                 ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
                 ObjectInputStream inFromClient = new ObjectInputStream(clientSocket.getInputStream())
         ) {
-            // Read the object from the client
-            // ******CustomData receivedData = (CustomData) inFromClient.readObject();
-            System.out.println("Received: " + receivedData);
 
-            // Modify the object data
-            receivedData.message = receivedData.message.toUpperCase();
+            Message receivedData = (Message) inFromClient.readObject();
+            // Read the object from the client
+            System.out.println("Received message from: " + receivedData.getUserName());
+
 
             // Send the exact same object back
-            outToClient.writeObject(receivedData);
+            //outToClient.writeObject(receivedData);
 
         } catch (Exception e) {
             System.err.println("Connection error: " + e.getMessage());

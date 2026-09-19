@@ -1,22 +1,34 @@
 import java.io.*;
 import java.net.*;
-
+import java.util.Scanner;
 class TCPClient {
     void tcpClient() {
-        String serverAddress = "192.168.1.57"; // Changed from "hostname"
+        Scanner keyboard = new Scanner(System.in);
+        String serverAddress = "192.168.1.57";
         int serverPort = 6789;
 
         // try-with-resources automatically closes the socket and streams
         try (
                 Socket clientSocket = new Socket(serverAddress, serverPort);
                 ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());R
+                ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
         ) {
-            //Create data to send
-            //Message for user  System.out.println();
+            //Maintain connection for continuous messaging
+            boolean continueMessaging = true;
+            while(continueMessaging){
+                Message messageObject = new Message();
+                System.out.println("Connected to Server (USE '0' to end communication)");
+                System.out.print("Enter a message: ");
+                String messageBody = keyboard.nextLine().trim();
+                if(messageBody.equals("0")){
+                    continueMessaging = false;
+                }else{
+                    messageObject = new Message("Westley", messageBody);
+                    outToServer.writeObject(messageObject);
+                }
+            }
 
-            // Send to server
-            outToServer.writeObject();(//object);
+
 
             // Read response
             // custom data = (CustomData) <- type cast inFromServer.readObject();
