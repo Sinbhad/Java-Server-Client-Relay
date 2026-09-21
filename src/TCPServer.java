@@ -1,8 +1,10 @@
+import lib.Routable;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-class TCPServer {
+class TCPServer implements Routable {
     void tcpServer() {
         int port = 6789;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -19,7 +21,7 @@ class TCPServer {
         }
     }
 
-    private static void handleClient(Socket socket) {
+    private void handleClient(Socket socket) {
         Scanner keyboard = new Scanner(System.in);
         String messageBody = "";
         try (
@@ -43,9 +45,7 @@ class TCPServer {
 
                     //Prepares the new message to be sent back to the client
                     Message message = new Message("Jim", messageBody);
-                    outToClient.writeObject(message);
-                    outToClient.flush();
-
+                    sendMessage(message, outToClient);
                 } catch (EOFException e) {
                     // This is expected when the client cleanly closes the connection
                     System.out.println("Client " + clientSocket.getInetAddress() + " disconnected.");
@@ -54,6 +54,22 @@ class TCPServer {
             }
         } catch (Exception e) {
             System.err.println("Connection error: " + e.getMessage());
+        }
+    }
+
+
+    @Override
+    public void receiveMessage() {
+
+    }
+
+    @Override
+    public void sendMessage(Message message, ObjectOutputStream outToClient) {
+        try {
+            outToClient.writeObject(message);
+            outToClient.flush();
+        } catch (IOException e) {
+            System.err.println("Error sending message to client: " + e.getMessage());
         }
     }
 }

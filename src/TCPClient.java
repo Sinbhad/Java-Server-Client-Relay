@@ -2,8 +2,11 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-class TCPClient {
-    void tcpClient() {
+import lib.RobertCircularlyLinkedList;
+import lib.Routable;
+
+class TCPClient<T> implements Routable<T>{
+    void tcpClient(){
         Scanner keyboard = new Scanner(System.in);
         String serverAddress = "192.168.1.57";
         int serverPort = 6789;
@@ -16,7 +19,7 @@ class TCPClient {
             System.out.println("Connected to Server (USE '0' to end communication)");
             boolean continueMessaging = true;
 
-            while(continueMessaging) {
+            while (continueMessaging) {
                 System.out.print("\nEnter a message: ");
                 String messageBody = keyboard.nextLine().trim();
 
@@ -48,4 +51,22 @@ class TCPClient {
             System.err.println("I/O Error: " + e.getMessage());
         }
     }
+
+    @Override
+    public void receiveMessage(){
+
+    }
+
+    @Override
+    public void sendMessage(T message, ObjectOutputStream outToClient) {
+
+    }
+
+    public MessageThread createMessageThread(Message message){
+        RobertCircularlyLinkedList<Message> messageQueue = new RobertCircularlyLinkedList<>();
+        MessageThread messageThread = new MessageThread(message.getMessage(), messageQueue);
+
+        //Blah blah blah
+    }
+
 }
