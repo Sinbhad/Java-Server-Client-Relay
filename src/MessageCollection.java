@@ -2,6 +2,7 @@ import lib.RobertCircularlyLinkedList;
 
 public class MessageCollection {
     RobertCircularlyLinkedList<MessageThread> messageThreadList;
+    Message message;
 
     public MessageCollection(){
         this.messageThreadList = new RobertCircularlyLinkedList<>();
@@ -25,5 +26,15 @@ public class MessageCollection {
 
     int getMessageThreadCount(){
         return this.messageThreadList.getSize();
+    }
+
+    boolean containsThreadName(String threadName){
+        for(int i = 0; i < this.messageThreadList.getSize(); i++){
+            MessageThread currentThread = this.messageThreadList.getValAtIndex(i);
+            if(currentThread.getThreadName().equals(threadName)){
+                return true;
+            }
+        }
+        return false;
     }
 }

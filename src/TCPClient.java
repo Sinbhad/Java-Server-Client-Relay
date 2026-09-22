@@ -53,7 +53,7 @@ class TCPClient<T> implements Routable<T>{
     }
 
     @Override
-    public void receiveMessage(){
+    public void receiveMessage(T message){
 
     }
 
@@ -64,9 +64,10 @@ class TCPClient<T> implements Routable<T>{
 
     public MessageThread createMessageThread(Message message){
         RobertCircularlyLinkedList<Message> messageQueue = new RobertCircularlyLinkedList<>();
-        MessageThread messageThread = new MessageThread(message.getMessage(), messageQueue);
+        MessageThread messageThread = new MessageThread(message.getUserName(), messageQueue);
 
-        //Blah blah blah
+        messageThread.addMessage(message);
+        return messageThread;
     }
 
 }

@@ -41,4 +41,8 @@ public class MessageThread {
     int getMessageCount(){
         return this.messageCount;
     }
+
+    void addMessage(Message message){
+        this.messageList.add(message);
+    }
 }
