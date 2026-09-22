@@ -11,9 +11,10 @@ public class MessageThread {
         this.messageCount = 0;
     }
 
-    public MessageThread(String threadName, RobertCircularlyLinkedList<Message> messageList){
+    public MessageThread(String threadName, Message message){
         this.threadName = threadName;
-        this.messageList = messageList;
+        this.messageList = new RobertCircularlyLinkedList<>();
+        this.messageList.add(message);
         this.messageCount = messageList.getSize();
     }
 

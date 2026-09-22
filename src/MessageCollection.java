@@ -6,6 +6,7 @@ public class MessageCollection {
 
     public MessageCollection(){
         this.messageThreadList = new RobertCircularlyLinkedList<>();
+
     }
 
     void setMessageThreadList(RobertCircularlyLinkedList<MessageThread> messageThreadList){
@@ -36,5 +37,16 @@ public class MessageCollection {
             }
         }
         return false;
+    }
+
+    void addByUserName(Message message){
+        for(int i = 0; i < messageThreadList.getSize(); i++){
+            MessageThread currentThread = this.messageThreadList.getValAtIndex(i);
+            if(currentThread.getThreadName().equals(message.getUserName())){
+                currentThread.addMessage(message);
+            }else{
+                this.addMessageThread(new MessageThread(message.getUserName(), message));
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ class TCPClient<T> implements Routable<T>{
         Scanner keyboard = new Scanner(System.in);
         String serverAddress = "192.168.1.57";
         int serverPort = 6789;
+        MessageCollection messageCollection = new MessageCollection();
 
         try (
                 Socket clientSocket = new Socket(serverAddress, serverPort);
@@ -53,21 +54,16 @@ class TCPClient<T> implements Routable<T>{
     }
 
     @Override
-    public void receiveMessage(T message){
+    public void receiveMessage(T message, T messageCollection){
+        Message convertedMessage = (Message) message;
+        MessageCollection convertedCollection = (MessageCollection) messageCollection;
+        if(convertedCollection.containsThreadName(convertedMessage.getUserName())){
 
+        }
     }
 
     @Override
     public void sendMessage(T message, ObjectOutputStream outToClient) {
 
     }
-
-    public MessageThread createMessageThread(Message message){
-        RobertCircularlyLinkedList<Message> messageQueue = new RobertCircularlyLinkedList<>();
-        MessageThread messageThread = new MessageThread(message.getUserName(), messageQueue);
-
-        messageThread.addMessage(message);
-        return messageThread;
-    }
-
 }
