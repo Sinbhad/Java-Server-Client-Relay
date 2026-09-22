@@ -4,8 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-class TCPServer implements Routable {
-    void tcpServer() {
+class TCPServer<T> implements Routable<T> {
+    public void tcpServer() {
         int port = 6789;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server is listening on port " + port);
@@ -22,50 +22,56 @@ class TCPServer implements Routable {
     }
 
     private void handleClient(Socket socket) {
-        Scanner keyboard = new Scanner(System.in);
-        String messageBody = "";
-        try (
-                Socket clientSocket = socket;
-                ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream inFromClient = new ObjectInputStream(clientSocket.getInputStream())
-        ) {
-            // Keep reading messages as long as the client is connected
-            while (true) {
+        try {
+            Socket clientSocket = socket;
+            ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
+            outToClient.flush();
+            ObjectInputStream inFromClient = new ObjectInputStream(clientSocket.getInputStream());
+
+            // Background thread: continuously reads incoming messages from this client
+            Thread clientReceiver = new Thread(() -> {
                 try {
-                    //Prepares received data as a message object for parsing
-                    Message receivedData = (Message) inFromClient.readObject();
+                    while (!clientSocket.isClosed()) {
+                        Message receivedData = (Message) inFromClient.readObject();
+                        System.out.println("\n[" + receivedData.getUserName() + "]: " + receivedData.getMessage());
+                        System.out.print("> ");
+                    }
+                } catch (EOFException | SocketException e) {
+                    System.out.println("\nClient " + clientSocket.getInetAddress() + " disconnected.");
+                } catch (Exception e) {
+                    if (!clientSocket.isClosed()) {
+                        System.err.println("\nError receiving from client: " + e.getMessage());
+                    }
+                }
+            });
+            clientReceiver.start();
 
-                    //Reads back the message to the user, displaying only essential information
-                    System.out.println("\nReceived message from: " + receivedData.getUserName());
-                    System.out.println("Message: " + receivedData.getMessage());
-
-                    //User Prompting for new message <for now a new message will not be received until the server sends a message back..>
-                    System.out.print("\nEnter a message: ");
-                    messageBody = keyboard.nextLine().trim();
-
-                    //Prepares the new message to be sent back to the client
-                    Message message = new Message("Jim", messageBody);
-                    sendMessage(message, outToClient);
-                } catch (EOFException e) {
-                    // This is expected when the client cleanly closes the connection
-                    System.out.println("Client " + clientSocket.getInetAddress() + " disconnected.");
-                    break;
+            // Server sender loop: send messages to client whenever typed
+            Scanner keyboard = new Scanner(System.in);
+            while (!clientSocket.isClosed()) {
+                System.out.print("> ");
+                String messageBody = keyboard.nextLine().trim();
+                if (!messageBody.isEmpty()) {
+                    sendMessage("Jim", messageBody, outToClient);
                 }
             }
+
         } catch (Exception e) {
             System.err.println("Connection error: " + e.getMessage());
         }
     }
 
-
     @Override
-    public void receiveMessage() {
-
+    public void receiveMessage(T message, T messageCollection){
+        Message convertedMessage = (Message) message;
+        System.out.println(convertedMessage.getUserName());
+        System.out.println(convertedMessage.getMessage());
     }
 
     @Override
-    public void sendMessage(Message message, ObjectOutputStream outToClient) {
+    public void sendMessage(String userName, String body, ObjectOutputStream outToClient) {
         try {
+            Message message = new Message(userName, body);
             outToClient.writeObject(message);
             outToClient.flush();
         } catch (IOException e) {

@@ -45,7 +45,7 @@ public class MessageCollection {
             if(currentThread.getThreadName().equals(message.getUserName())){
                 currentThread.addMessage(message);
             }else{
-                this.addMessageThread(new MessageThread(message.getUserName(), message));
+                this.addMessageThread(new MessageThread(message));
             }
         }
     }

@@ -5,51 +5,64 @@ import java.util.Scanner;
 import lib.RobertCircularlyLinkedList;
 import lib.Routable;
 
-class TCPClient<T> implements Routable<T>{
-    void tcpClient(){
+class TCPClient<T> implements Runnable, Routable<T>{
+    public void tcpClient() {
         Scanner keyboard = new Scanner(System.in);
         String serverAddress = "192.168.1.57";
         int serverPort = 6789;
         MessageCollection messageCollection = new MessageCollection();
 
-        try (
-                Socket clientSocket = new Socket(serverAddress, serverPort);
-                ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-        ) {
-            System.out.println("Connected to Server (USE '0' to end communication)");
-            boolean continueMessaging = true;
+        try {
+            Socket clientSocket = new Socket(serverAddress, serverPort);
 
-            while (continueMessaging) {
-                System.out.print("\nEnter a message: ");
+            ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+            outToServer.flush();
+            ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+
+            System.out.println("Connected to Server (Type '0' to exit)");
+
+            Thread receiverThread = new Thread(() -> {
+                try {
+                    while (!clientSocket.isClosed()) {
+                        Message receivedData = (Message) inFromServer.readObject();
+
+                        synchronized (messageCollection) {
+                            //noinspection unchecked
+                            receiveMessage((T) receivedData, (T) messageCollection);
+                        }
+
+                        System.out.println("\n[Server]: " + receivedData.getMessage());
+                        System.out.print("> "); // Keep the input prompt visible
+                    }
+                } catch (EOFException | SocketException e) {
+                    System.out.println("\nDisconnected from server.");
+                } catch (Exception e) {
+                    if (!clientSocket.isClosed()) {
+                        System.err.println("\nReceive error: " + e.getMessage());
+                    }
+                }
+            });
+            receiverThread.start();
+
+            while (true) {
+                System.out.print("> ");
                 String messageBody = keyboard.nextLine().trim();
 
                 if (messageBody.equals("0")) {
-                    continueMessaging = false;
                     System.out.println("Closing connection...");
-                } else {
-                    Message messageObject = new Message("Westley", messageBody);
-                    outToServer.writeObject(messageObject);
-                    outToServer.flush();
+                    clientSocket.close(); // Triggers SocketException in receiverThread to stop it
+                    break;
+                }
 
-
-                    try {
-                        Message receivedData = (Message) inFromServer.readObject();
-                        System.out.println("\nReceived message from: " + receivedData.getUserName());
-                        System.out.println("Message: " + receivedData.getMessage());
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-
+                if (!messageBody.isEmpty()) {
+                    sendMessage("Westley Ney", messageBody, outToServer);
                 }
             }
 
-        } catch (ConnectException e) {
-            System.err.println("Could not connect to server. Is it running on port " + serverPort + "?");
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + serverAddress);
-        } catch (IOException e) {
-            System.err.println("I/O Error: " + e.getMessage());
+            receiverThread.join();
+
+        } catch (Exception e) {
+            System.err.println("Client Error: " + e.getMessage());
         }
     }
 
@@ -58,12 +71,21 @@ class TCPClient<T> implements Routable<T>{
         Message convertedMessage = (Message) message;
         MessageCollection convertedCollection = (MessageCollection) messageCollection;
         if(convertedCollection.containsThreadName(convertedMessage.getUserName())){
-
+            convertedCollection.addByUserName(convertedMessage);
+        }else{
+            convertedCollection.addMessageThread(new MessageThread(convertedMessage));
         }
     }
 
     @Override
-    public void sendMessage(T message, ObjectOutputStream outToClient) {
+    public void sendMessage(String userName, String body, ObjectOutputStream outToServer) throws IOException {
+        Message message = new Message(userName, body);
+        outToServer.writeObject(message);
+        outToServer.flush();
+     }
+
+    @Override
+    public void run() {
 
     }
 }
