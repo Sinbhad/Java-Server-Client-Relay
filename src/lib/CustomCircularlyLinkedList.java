@@ -3,8 +3,11 @@ package lib;
 @SuppressWarnings("ALL")
 /**
  * Custom generic implementation of a Circular Linked List
+ * Many methods may deviate from the expected implementation,
+ * this implementation is tailored to the needs of my current project.
+ * Author: Robert Poley
  */
-public class RobertCircularlyLinkedList<T>{
+public class CustomCircularlyLinkedList<T>{
     Node head;
     Node tail;
 
@@ -163,30 +166,49 @@ public class RobertCircularlyLinkedList<T>{
     public void removeAt(int index) {
         //Storage for size
         int size = getSize();
+        if(index > size){
+            System.out.println("Index out of bounds, removal incomplete. Size of list :" + size);
+            return;
+        }
 
         //Base case, stop if any condition is met
         if (size == 0 || index < 0 || index >= size) return;
 
-        Node tempNode = head;
-        //Step through the list
-        for (int i = 0; i < index; i++) {
-            tempNode = tempNode.getNextNode();
-        }
-
-        //Edge case, if there is only one value, break any links
+        // Edge case, if there is only one value, break any links
         if (size == 1) {
+            //Clear data before removing
+            getHead().setNodeValue(null);
             head = null;
             tail = null;
         } else {
-            //Create the proper links
+            Node tempNode = head;
+            //Step through the list to find the node to remove
+            for (int i = 0; i < index; i++) {
+                tempNode = tempNode.getNextNode();
+            }
+
+            //Create Node objects to store nodes
             Node prevNode = tempNode.getLastNode();
             Node nextNode = tempNode.getNextNode();
 
-            prevNode.setNextNode(nextNode);
-            nextNode.setLastNode(prevNode);
+            //Clear data before breaking link
+            tempNode.setNodeValue(null);
 
-            if (tempNode == head) head = nextNode;
-            if (tempNode == tail) tail = prevNode;
+            //The node before the removed node now points ahead to the node that was ahead of the removed node
+            if (prevNode != null) {
+                prevNode.setNextNode(nextNode);
+            } else {
+                //If there is no previous node, remove the head
+                head = nextNode;
+            }
+
+            //The node after the removed node now points backward to the node that was behind the removed node
+            if (nextNode != null) {
+                nextNode.setLastNode(prevNode);
+            } else {
+                //If there is no next node, remove the tail
+                tail = prevNode;
+            }
         }
     }
 
@@ -249,6 +271,7 @@ public class RobertCircularlyLinkedList<T>{
 
                 //Edge case, node in the list
                 if (head == tail && head == tempNode) {
+                    getHead().setNodeValue(null);
                     head = null;
                     tail = null;
                 } else {
@@ -256,12 +279,24 @@ public class RobertCircularlyLinkedList<T>{
                     Node<T> prevNode = tempNode.getLastNode();
                     Node<T> nextNode = tempNode.getNextNode();
 
-                    prevNode.setNextNode(nextNode);
-                    nextNode.setLastNode(prevNode);
+                    //Clear data from node before breaking link
+                    tempNode.setNodeValue(null);
 
-                    //Reassign head or tail if the removed node held those positions
-                    if (tempNode == head) head = nextNode;
-                    if (tempNode == tail) tail = prevNode;
+                    //The node before the removed node now points ahead to the node that was ahead of the removed node
+                    if (prevNode != null) {
+                        prevNode.setNextNode(nextNode);
+                    } else {
+                        //If there is no previous node, remove the head
+                        head = nextNode;
+                    }
+
+                    //The node after the removed node now points backward to the node that was behind the removed node
+                    if (nextNode != null) {
+                        nextNode.setLastNode(prevNode);
+                    } else {
+                        //If there is no next node, remove the tail
+                        tail = prevNode;
+                    }
                 }
                 break;
             }
@@ -286,6 +321,14 @@ public class RobertCircularlyLinkedList<T>{
             tempNode = tempNode.getNextNode();
         }while(tempNode != head);
         return size;
+    }
+
+
+    public boolean hasNext(T data){
+        int index = findIndex(data);
+        Node node = getNodeAtIndex(index);
+        if(node.checkIfNextExists()){return true;}
+        else{return false;}
     }
 
     /**

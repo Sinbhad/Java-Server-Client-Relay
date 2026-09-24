@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-import lib.RobertCircularlyLinkedList;
 import lib.Routable;
 
 class TCPClient<T> implements Runnable, Routable<T>{

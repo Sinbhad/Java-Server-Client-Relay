@@ -1,19 +1,19 @@
-import lib.RobertCircularlyLinkedList;
+import lib.CustomCircularlyLinkedList;
 
 public class MessageThread {
     String threadName;
-    RobertCircularlyLinkedList<Message> messageList;
+    CustomCircularlyLinkedList<Message> messageList;
     int messageCount;
 
     public MessageThread(){
         this.threadName = "";
-        this.messageList = new RobertCircularlyLinkedList<>();
+        this.messageList = new CustomCircularlyLinkedList<>();
         this.messageCount = 0;
     }
 
     public MessageThread(Message message){
         this.threadName = message.getUserName();
-        this.messageList = new RobertCircularlyLinkedList<>();
+        this.messageList = new CustomCircularlyLinkedList<>();
         this.messageList.add(message);
         this.messageCount = messageList.getSize();
     }
@@ -26,12 +26,12 @@ public class MessageThread {
         return this.threadName;
     }
 
-    void setMessageList(RobertCircularlyLinkedList<Message> messageList){
+    void setMessageList(CustomCircularlyLinkedList<Message> messageList){
         this.messageList = messageList;
         this.messageCount = messageList.getSize();
     }
 
-    RobertCircularlyLinkedList<Message> getMessageList(){
+    CustomCircularlyLinkedList<Message> getMessageList(){
         return this.messageList;
     }
 

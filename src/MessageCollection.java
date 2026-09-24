@@ -1,19 +1,19 @@
-import lib.RobertCircularlyLinkedList;
+import lib.CustomCircularlyLinkedList;
 
 public class MessageCollection {
-    RobertCircularlyLinkedList<MessageThread> messageThreadList;
+    CustomCircularlyLinkedList<MessageThread> messageThreadList;
     Message message;
 
     public MessageCollection(){
-        this.messageThreadList = new RobertCircularlyLinkedList<>();
+        this.messageThreadList = new CustomCircularlyLinkedList<>();
 
     }
 
-    void setMessageThreadList(RobertCircularlyLinkedList<MessageThread> messageThreadList){
+    void setMessageThreadList(CustomCircularlyLinkedList<MessageThread> messageThreadList){
         this.messageThreadList = messageThreadList;
     }
 
-    RobertCircularlyLinkedList<MessageThread> getMessageThreadList(){
+    CustomCircularlyLinkedList<MessageThread> getMessageThreadList(){
         return this.messageThreadList;
     }
 
