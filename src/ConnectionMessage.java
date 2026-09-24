@@ -8,4 +8,12 @@ public class ConnectionMessage extends Message {
         super(userName, message);
         this.ipAddr = ipAddr;
     }
+
+    public void setIpAddr(String ipAddr){
+        this.ipAddr = ipAddr;
+    }
+
+    public String getIpAddr(){
+        return this.ipAddr;
+    }
 }

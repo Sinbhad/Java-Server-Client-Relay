@@ -33,6 +33,7 @@ class TCPServer<T> implements Routable<T> {
                 try {
                     while (!clientSocket.isClosed()) {
                         Message receivedData = (Message) inFromClient.readObject();
+                        //-------Add Queue here, create for loop that prints runs receiveMessage(receivedData); for all queued messages
                         System.out.println("\n[" + receivedData.getUserName() + "]: " + receivedData.getMessage());
                         System.out.print("> ");
                     }
@@ -64,11 +65,13 @@ class TCPServer<T> implements Routable<T> {
     @Override
     public void receiveMessage(T message, T messageCollection){
         Message convertedMessage = (Message) message;
-        //----------Create a queue for messages to arrive in and handle them as needed
         if(convertedMessage.getMessage().equals("Hello Server :)")){
             //Temp message for debugging
             System.out.println("New user " + convertedMessage.getUserName() + " connected");
-            //-------Create database to store username ip-addr pairs
+            //-------Create database to store username ip-addr pairs **something like userNameDB.addTo(String userName, String ipAddress)**
+            ConnectionMessage conMessage = (ConnectionMessage) message;
+            String ipAddr = conMessage.getIpAddr();
+            System.out.println(ipAddr);
         }
 
         System.out.println(convertedMessage.getUserName());
