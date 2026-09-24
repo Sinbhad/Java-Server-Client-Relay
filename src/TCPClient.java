@@ -7,6 +7,13 @@ import lib.Routable;
 class TCPClient<T> implements Runnable, Routable<T>{
     public void tcpClient() {
         Scanner keyboard = new Scanner(System.in);
+        InetAddress localhost;
+        try {
+            localhost = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+        String clientAddress = localhost.toString();
         String serverAddress = "192.168.1.57";
         int serverPort = 6789;
         MessageCollection messageCollection = new MessageCollection();
@@ -18,6 +25,10 @@ class TCPClient<T> implements Runnable, Routable<T>{
             outToServer.flush();
             ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 
+            System.out.println("Enter a username");
+            System.out.print(">");
+            String userName = keyboard.nextLine();
+            sendConnectionMessage(userName, "Hello Server :)", clientAddress, outToServer);
             System.out.println("Connected to Server (Type '0' to exit)");
 
             Thread receiverThread = new Thread(() -> {
@@ -54,7 +65,7 @@ class TCPClient<T> implements Runnable, Routable<T>{
                 }
 
                 if (!messageBody.isEmpty()) {
-                    sendMessage("Westley Ney", messageBody, outToServer);
+                    sendMessage(userName, messageBody, outToServer);
                 }
             }
 
@@ -69,17 +80,19 @@ class TCPClient<T> implements Runnable, Routable<T>{
     public void receiveMessage(T message, T messageCollection){
         Message convertedMessage = (Message) message;
         MessageCollection convertedCollection = (MessageCollection) messageCollection;
-        if(convertedCollection.containsThreadName(convertedMessage.getUserName())){
-            convertedCollection.addByUserName(convertedMessage);
-        }else{
-            convertedCollection.addMessageThread(new MessageThread(convertedMessage));
-        }
+        convertedCollection.addByUserName(convertedMessage);
     }
 
     @Override
     public void sendMessage(String userName, String body, ObjectOutputStream outToServer) throws IOException {
         Message message = new Message(userName, body);
         outToServer.writeObject(message);
+        outToServer.flush();
+     }
+
+     public void sendConnectionMessage(String userName, String body, String ipAddr, ObjectOutputStream outToServer) throws IOException {
+        ConnectionMessage conMess = new ConnectionMessage(userName, body, ipAddr);
+        outToServer.writeObject(conMess);
         outToServer.flush();
      }
 

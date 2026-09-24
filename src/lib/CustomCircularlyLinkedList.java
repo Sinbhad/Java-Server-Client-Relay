@@ -99,8 +99,11 @@ public class CustomCircularlyLinkedList<T>{
             Node prevNode = currentNode.getLastNode();
 
             //Wire up the new node to sit in between the old values
+            //First the node is connected to the nodes next to it
             newNode.setNextNode(currentNode);
             newNode.setLastNode(prevNode);
+
+            //Then the nodes we want next to the newly added nodes are connected to it
             prevNode.setNextNode(newNode);
             currentNode.setLastNode(newNode);
         }

@@ -64,6 +64,13 @@ class TCPServer<T> implements Routable<T> {
     @Override
     public void receiveMessage(T message, T messageCollection){
         Message convertedMessage = (Message) message;
+        //----------Create a queue for messages to arrive in and handle them as needed
+        if(convertedMessage.getMessage().equals("Hello Server :)")){
+            //Temp message for debugging
+            System.out.println("New user " + convertedMessage.getUserName() + " connected");
+            //-------Create database to store username ip-addr pairs
+        }
+
         System.out.println(convertedMessage.getUserName());
         System.out.println(convertedMessage.getMessage());
     }
