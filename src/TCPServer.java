@@ -26,25 +26,7 @@ class TCPServer<T> implements Routable<T> {
             Socket clientSocket = socket;
             ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
             outToClient.flush();
-            ObjectInputStream inFromClient = new ObjectInputStream(clientSocket.getInputStream());
-
-            // Background thread: continuously reads incoming messages from this client
-            Thread clientReceiver = new Thread(() -> {
-                try {
-                    while (!clientSocket.isClosed()) {
-                        Message receivedData = (Message) inFromClient.readObject();
-                        //-------Add Queue here, create for loop that prints runs receiveMessage(receivedData); for all queued messages
-                        System.out.println("\n[" + receivedData.getUserName() + "]: " + receivedData.getMessage());
-                        System.out.print("> ");
-                    }
-                } catch (EOFException | SocketException e) {
-                    System.out.println("\nClient " + clientSocket.getInetAddress() + " disconnected.");
-                } catch (Exception e) {
-                    if (!clientSocket.isClosed()) {
-                        System.err.println("\nError receiving from client: " + e.getMessage());
-                    }
-                }
-            });
+            Thread clientReceiver = getClientReceiver(clientSocket);
             clientReceiver.start();
 
             // Server sender loop: send messages to client whenever typed
@@ -62,10 +44,33 @@ class TCPServer<T> implements Routable<T> {
         }
     }
 
+    private static Thread getClientReceiver(Socket clientSocket) throws IOException {
+        ObjectInputStream inFromClient = new ObjectInputStream(clientSocket.getInputStream());
+
+        // Background thread: continuously reads incoming messages from this client
+        Thread clientReceiver = new Thread(() -> {
+            try {
+                while (!clientSocket.isClosed()) {
+                    Message receivedData = (Message) inFromClient.readObject();
+                    //-------Add Queue here, create for loop that prints runs receiveMessage(receivedData); for all queued messages
+                    System.out.println("\n[" + receivedData.getUserName() + "]: " + receivedData.getMessage());
+                    System.out.print("> ");
+                }
+            } catch (EOFException | SocketException e) {
+                System.out.println("\nClient " + clientSocket.getInetAddress() + " disconnected.");
+            } catch (Exception e) {
+                if (!clientSocket.isClosed()) {
+                    System.err.println("\nError receiving from client: " + e.getMessage());
+                }
+            }
+        });
+        return clientReceiver;
+    }
+
     @Override
     public void receiveMessage(T message, T messageCollection){
         Message convertedMessage = (Message) message;
-        if(convertedMessage.getMessage().equals("Hello Server :)")){
+        if(isNewConnection(convertedMessage)){
             //Temp message for debugging
             System.out.println("New user " + convertedMessage.getUserName() + " connected");
             //-------Create database to store username ip-addr pairs **something like userNameDB.addTo(String userName, String ipAddress)**
@@ -87,5 +92,9 @@ class TCPServer<T> implements Routable<T> {
         } catch (IOException e) {
             System.err.println("Error sending message to client: " + e.getMessage());
         }
+    }
+
+    public boolean isNewConnection(Message message){
+        return message.getMessage().equals("Hello Server :)");
     }
 }
