@@ -1,3 +1,7 @@
+package main;
+
+import messaging.ConnectionMessage;
+import messaging.Message;
 import lib.Routable;
 
 import java.io.*;

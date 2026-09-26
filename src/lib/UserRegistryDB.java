@@ -1,3 +1,5 @@
+package lib;
+
 import java.sql.*;
 
 public class UserRegistryDB {

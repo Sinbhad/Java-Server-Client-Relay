@@ -1,3 +1,5 @@
+package messaging;
+
 import java.io.Serializable;
 
 public class Message implements Serializable {
@@ -19,7 +21,7 @@ public class Message implements Serializable {
         this.userName = userName;
     }
 
-    String getUserName(){
+    public String getUserName(){
         return userName;
     }
 
@@ -27,7 +29,7 @@ public class Message implements Serializable {
         this.message = message;
     }
 
-    String getMessage(){
+    public String getMessage(){
         return message;
     }
 }

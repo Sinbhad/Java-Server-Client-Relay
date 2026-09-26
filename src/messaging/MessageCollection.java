@@ -1,3 +1,5 @@
+package messaging;
+
 import lib.CustomCircularlyLinkedList;
 
 public class MessageCollection {
@@ -39,7 +41,7 @@ public class MessageCollection {
         return false;
     }
 
-    void addByUserName(Message message){
+    public void addByUserName(Message message){
         for(int i = 0; i < messageThreadList.getSize(); i++){
             MessageThread currentThread = this.messageThreadList.getValAtIndex(i);
             if(currentThread.getThreadName().equals(message.getUserName())){

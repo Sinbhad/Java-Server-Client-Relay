@@ -1,7 +1,12 @@
+package main;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import messaging.ConnectionMessage;
+import messaging.Message;
+import messaging.MessageCollection;
 import lib.Routable;
 
 class TCPClient<T> implements Runnable, Routable<T>{

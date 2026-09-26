@@ -1,3 +1,5 @@
+package messaging;
+
 import lib.CustomCircularlyLinkedList;
 
 public class MessageThread {

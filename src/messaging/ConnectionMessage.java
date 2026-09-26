@@ -1,4 +1,4 @@
-import messaging.Message;
+package messaging;
 
 public class ConnectionMessage extends Message {
     private static final long serialVersionUID = 1L;
