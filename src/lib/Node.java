@@ -1,14 +1,13 @@
 package lib;
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class Node<T> {
-    private Node prev;
-    private Node next;
-    private Object value;
+    private Node<T> prev;
+    private Node<T> next;
+    private T value;
 
     public Node(){
         this.prev = null;
         this.next = null;
-        this.value = "";
+        this.value = null;
     }
 
     public Node(T value){
@@ -17,19 +16,19 @@ public class Node<T> {
         this.value = value;
     }
 
-    public void setNextNode(Node next){
+    public void setNextNode(Node<T> next){
         this.next = next;
     }
 
-    public Node getNextNode(){
+    public Node<T> getNextNode(){
         return next;
     }
 
-    public void setLastNode(Node prev){
+    public void setLastNode(Node<T> prev){
         this.prev = prev;
     }
 
-    public Node getLastNode(){
+    public Node<T> getLastNode(){
         return prev;
     }
 
@@ -38,7 +37,7 @@ public class Node<T> {
     }
 
     public T getValue(){
-        return (T)value;
+        return value;
     }
 
     public Boolean checkIfNextExists(){
@@ -46,9 +45,9 @@ public class Node<T> {
     }
 
 
-    public Node getLast() {
-        Node nextNode;
-        Node tempNode = this;
+    public Node<T> getLast() {
+        Node<T> nextNode;
+        Node<T> tempNode = this;
         while (tempNode.checkIfNextExists()) {
             nextNode = tempNode.getNextNode();
             tempNode = nextNode;
