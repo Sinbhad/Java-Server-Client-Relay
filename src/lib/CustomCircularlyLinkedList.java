@@ -73,7 +73,6 @@ public class CustomCircularlyLinkedList<T>{
             return;
         }
 
-
         //Placeholder for data assignment
         Node<T> newNode = new Node<>(value);
 
@@ -138,9 +137,10 @@ public class CustomCircularlyLinkedList<T>{
      * @return returns a generic value
      */
     public T getValAtIndex(int index){
+        if (head == null) return null; // FIX: Added to prevent NPE on empty list
+
         Node<T> tempNode = head;
         for(int i = 0; i < index; i++){
-            if(tempNode == null) return null;
             tempNode = tempNode.getNextNode();
         }
         return tempNode.getValue();
@@ -152,14 +152,14 @@ public class CustomCircularlyLinkedList<T>{
      * @return returns a Node type object from the list
      */
     public Node<T> getNodeAtIndex(int index){
+        if (head == null) return null; // FIX: Added to prevent NPE on empty list
+
         Node<T> tempNode = head;
         for(int i = 0; i < index; i++){
-            if(tempNode == null) return null;
             tempNode = tempNode.getNextNode();
         }
         return tempNode;
     }
-
 
     /**
      * Allows for the removal of a node from any given index on the list
@@ -196,19 +196,13 @@ public class CustomCircularlyLinkedList<T>{
             //Clear data before breaking link
             tempNode.setNodeValue(null);
 
-            //The node before the removed node now points ahead to the node that was ahead of the removed node
-            if (prevNode != null) {
-                prevNode.setNextNode(nextNode);
-            } else {
-                //If there is no previous node, remove the head
+            prevNode.setNextNode(nextNode);
+            nextNode.setLastNode(prevNode);
+
+            if (tempNode == head) {
                 head = nextNode;
             }
-
-            //The node after the removed node now points backward to the node that was behind the removed node
-            if (nextNode != null) {
-                nextNode.setLastNode(prevNode);
-            } else {
-                //If there is no next node, remove the tail
+            if (tempNode == tail) {
                 tail = prevNode;
             }
         }
@@ -284,19 +278,13 @@ public class CustomCircularlyLinkedList<T>{
                     //Clear data from node before breaking link
                     tempNode.setNodeValue(null);
 
-                    //The node before the removed node now points ahead to the node that was ahead of the removed node
-                    if (prevNode != null) {
-                        prevNode.setNextNode(nextNode);
-                    } else {
-                        //If there is no previous node, remove the head
+                    prevNode.setNextNode(nextNode);
+                    nextNode.setLastNode(prevNode);
+
+                    if (tempNode == head) {
                         head = nextNode;
                     }
-
-                    //The node after the removed node now points backward to the node that was behind the removed node
-                    if (nextNode != null) {
-                        nextNode.setLastNode(prevNode);
-                    } else {
-                        //If there is no next node, remove the tail
+                    if (tempNode == tail) {
                         tail = prevNode;
                     }
                 }
