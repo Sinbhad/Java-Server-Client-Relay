@@ -1,30 +1,25 @@
 package lib;
-
-import messaging.Message;
-
 /*
     Custom implementation of a Queue to fit basic needs of current program,
     works with the custom implementation of the linked list found in the program
 
     Author: Robert Poley
  */
-@SuppressWarnings("unchecked")
 public class CustomQueue<T> {
-    private Message message;
     private int size;
-    private CustomCircularlyLinkedList<Message> messages;
+    private CustomCircularlyLinkedList<T> storage;
 
-    public void add(T message){
+    public void add(T data){
         //messages get added to the end of the list
-        messages.add((Message) message);
-        size++;
+        storage.add(data);
+        this.size++;
     }
 
     public T peek(){
-        if(messages.getValAtIndex(0) == null){
+        if(storage.getValAtIndex(0) == null){
             return null;
         }
-        return (T) messages.getValAtIndex(0);
+        return storage.getValAtIndex(0);
     }
 
     public T poll(){
@@ -34,24 +29,23 @@ public class CustomQueue<T> {
         */
         T value = peek();
         if(value != null){
-            messages.removeAt(0);
+            storage.removeAt(0);
             size--;
         }
         return value;
     }
 
-    public Boolean find(Message message){
-        if(!messages.find(message)){
-            return false;
-        }
-        return true;
+    public Boolean find(T data){
+        return storage.find(data);
     }
 
-    public void insert(Message message, int index){
-        messages.addAtIndex(index, message);
+    public void insert(T data, int index){
+        storage.addAtIndex(index, data);
     }
 
     public void printLine(){
-        messages.printAll();
+        storage.printAll();
     }
+
+    public int getSize(){return size;}
 }
